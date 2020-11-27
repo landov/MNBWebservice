@@ -28,6 +28,7 @@ public class MNBWebserviceFacade {
 	private MNBArfolyamServiceSoap port = service.getCustomBindingMNBArfolyamServiceSoap();
 	private JAXBContext jaxbContext;
 	private Unmarshaller jaxbUnmarshaller;
+	private List<String> currencies = getCurrencies();
 
 	private <T> Object unmarshall(String xml, Class<T> mnbclass) {
 		try {
@@ -39,6 +40,12 @@ public class MNBWebserviceFacade {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public void checkCurrency(String currency) {
+		if (!(currencies.contains(currency)))
+			throw new IllegalArgumentException("Currency " + currency + " not found in dataset.");
+
 	}
 
 	public LocalDateInterval getStoredInterval() {
@@ -55,7 +62,7 @@ public class MNBWebserviceFacade {
 		}
 	}
 
-	public List<String> getCurrencies() throws MNBArfolyamServiceSoapGetCurrenciesStringFaultFaultMessage {
+	public List<String> getCurrencies() {
 		List<String> currencies = new ArrayList<String>();
 		try {
 			String xml = port.getCurrencies();
@@ -71,11 +78,12 @@ public class MNBWebserviceFacade {
 	}
 
 	public ExchangeRate getCurrentExchangeRate(String currency) {
-			LocalDate lastDate = getStoredInterval().getEndDate();
-			return getHistorycalExchangeRates(currency,lastDate,lastDate).get(0);
+		LocalDate lastDate = getStoredInterval().getEndDate();
+		return getHistoricalExchangeRates(currency, lastDate, lastDate).get(0);
 	}
 
-	public List<ExchangeRate> getHistorycalExchangeRates(String currency, LocalDate startDate, LocalDate endDate) {
+	public List<ExchangeRate> getHistoricalExchangeRates(String currency, LocalDate startDate, LocalDate endDate) {
+		checkCurrency(currency);
 		List<ExchangeRate> exchangeRates = new ArrayList<ExchangeRate>();
 		LocalDateInterval localDateInterval = getStoredInterval();
 		if (startDate.isBefore(localDateInterval.getStartDate())) {
@@ -88,7 +96,8 @@ public class MNBWebserviceFacade {
 					endDate.format(DateTimeFormatter.ISO_LOCAL_DATE), currency);
 			MNBExchangeRates currentExchangeRates = (MNBExchangeRates) unmarshall(xml, MNBExchangeRates.class);
 			Day[] days = currentExchangeRates.getDay();
-			if (days == null) throw new IllegalArgumentException("No data within selection.");
+			if (days == null)
+				throw new IllegalArgumentException("No data within selection.");
 			for (Day day : days) {
 				String date = day.getDate();
 				Rate[] rates = day.getRate();
@@ -96,7 +105,7 @@ public class MNBWebserviceFacade {
 					Rate rate = rates[0];
 					exchangeRates.add(new ExchangeRate(date, rate));
 				}
-				
+
 			}
 		} catch (MNBArfolyamServiceSoapGetExchangeRatesStringFaultFaultMessage e) {
 			e.printStackTrace();
@@ -104,20 +113,27 @@ public class MNBWebserviceFacade {
 		Collections.sort(exchangeRates, (x, y) -> x.getDate().compareTo(y.getDate()));
 		return exchangeRates;
 	}
-	
-	public List<ExchangeRate> getHistorycalExchangeRates(String currency, String startDate, String endDate) {
-		return getHistorycalExchangeRates(currency,LocalDate.parse(startDate),LocalDate.parse(endDate));
+
+	public List<ExchangeRate> getHistoricalExchangeRates(String currency, String startDate, String endDate) {
+		return getHistoricalExchangeRates(currency, LocalDate.parse(startDate), LocalDate.parse(endDate));
 	}
-	
+
 	public ExchangeRate getHistoricalExchangeRate(String currency, LocalDate date) {
-		return getHistorycalExchangeRates(currency,date,date).get(0);
+		return getHistoricalExchangeRates(currency, date, date).get(0);
 	}
-	
+
 	public ExchangeRate getHistoricalExchangeRate(String currency, String date) {
-		return getHistorycalExchangeRates(currency,date,date).get(0);
+		return getHistoricalExchangeRates(currency, date, date).get(0);
 	}
-	
-	/*public ExchangeRate getExchangeRateBetween(String currency1, String currency2, LocalDate Date) {
-		
-	}*/
+
+	public ExchangeRate getExchangeRateBetween(String currency1, String currency2, LocalDate date) {
+		ExchangeRate rate1 = getHistoricalExchangeRate(currency1, date);
+		ExchangeRate rate2 = getHistoricalExchangeRate(currency2, date);
+		ExchangeRate exchangeRate = new ExchangeRate();
+		exchangeRate.setDate(date);
+		exchangeRate.setCurrency(rate1.getCurrency());
+		exchangeRate.setUnit(rate1.getUnit());
+		exchangeRate.setRate(rate1.getRate() / rate2.getRate());
+		return exchangeRate;
+	}
 }

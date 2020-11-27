@@ -11,6 +11,10 @@ public class ExchangeRate {
 	private Integer unit;
 	private String currency;
 	private Double rate;
+	
+	public ExchangeRate() {
+		
+	}
 
 	public ExchangeRate(LocalDate date, int unit, String currency, double rate) {
 		this.date = date;
