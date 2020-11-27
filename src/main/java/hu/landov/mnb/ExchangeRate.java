@@ -1,6 +1,7 @@
 package hu.landov.mnb;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 
 import hu.landov.mnb.classes.Rate;
 
@@ -33,6 +34,8 @@ public class ExchangeRate {
 		String tempRate = rate.getContent().replace(",", ".");
 		this.rate = Double.parseDouble(tempRate);
 	}
+	
+
 
 	public LocalDate getDate() {
 		return date;
@@ -68,7 +71,7 @@ public class ExchangeRate {
 	
 	@Override
 	public String toString() {
-		return date.toString() + " " + unit.toString() +" "+ currency + " " + rate.toString();
+		return date.toString() + " " + unit.toString() +" "+ currency + " " + rate.toString()+" HUF";
 	}
 
 }
