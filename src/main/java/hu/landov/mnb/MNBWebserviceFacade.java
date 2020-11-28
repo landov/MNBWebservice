@@ -125,6 +125,11 @@ public class MNBWebserviceFacade {
 	public ExchangeRate getHistoricalExchangeRate(String currency, String date) {
 		return getHistoricalExchangeRates(currency, date, date).get(0);
 	}
+	
+	public ExchangeRate getExchangeRateBetween(String currency1, String currency2, String date) {
+		LocalDate localDate = LocalDate.parse(date);
+		return getExchangeRateBetween(currency1, currency2, localDate);
+	}
 
 	public ExchangeRate getExchangeRateBetween(String currency1, String currency2, LocalDate date) {
 		ExchangeRate rate1 = getHistoricalExchangeRate(currency1, date);
