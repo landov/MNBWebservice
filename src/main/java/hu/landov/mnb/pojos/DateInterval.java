@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+@XmlRootElement(name="DateInterval")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DateInterval {
 	@XmlAttribute
