@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 public class Units
 {
-	@XmlElement
+	@XmlElement(name="Unit")
     private Unit[] unit;
 
     public Unit[] getUnit ()

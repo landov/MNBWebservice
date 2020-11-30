@@ -46,9 +46,9 @@ public class MNBWebserviceFacade {
 	 * @throws MNBWebserviceFacadeException
 	 */
 	public MNBWebserviceFacade() throws MNBWebserviceFacadeException {
-		service = new MNBArfolyamServiceSoapImpl();
-		port = service.getCustomBindingMNBArfolyamServiceSoap();
-		currencies = getCurrencies();
+		service = new MNBArfolyamServiceSoapImpl(); 
+		port = service.getCustomBindingMNBArfolyamServiceSoap(); 
+		currencies = getCurrencies(); 
 	}
 
 	/**
@@ -58,15 +58,16 @@ public class MNBWebserviceFacade {
 	 * @param xml the string response from the service
 	 * @param the desired class
 	 * @return <T> Object the object instance from the string representation
+	 * @throws MNBWebserviceFacadeException 
 	 */
-	private <T> Object unmarshall(String xml, Class<T> mnbclass) throws MNBWebserviceFacadeException {
+	private <T> Object unmarshall(String xml, Class<T> mnbclass) throws MNBWebserviceFacadeException  {
 		try {
 			jaxbContext = JAXBContext.newInstance(mnbclass);
 			jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			Object unmarshalled = jaxbUnmarshaller.unmarshal(new StringReader(xml));
 			return unmarshalled;
 		} catch (JAXBException e) {
-			throw new MNBWebserviceFacadeException(
+		  throw new MNBWebserviceFacadeException(
 					"http://www.mnb.hu/arfolyamok.asmx returned no data for:" + mnbclass.getName());
 		}
 	}
@@ -121,11 +122,11 @@ public class MNBWebserviceFacade {
 			for (String s : curr) {
 				currencies.add(s);
 			}
+			return currencies;
 		} catch (MNBArfolyamServiceSoapGetCurrenciesStringFaultFaultMessage e) {
 			throw new MNBWebserviceFacadeException("Soap service thrown an exceprion: " + e.getMessage(),
 					e.getFaultInfo(), e);
 		}
-		return currencies;
 	}
 
 	/**

@@ -14,7 +14,7 @@ public class Day {
 	@XmlAttribute
 	private String date;
 
-	@XmlElement
+	@XmlElement(name="Rate")
     private Rate[] rate;
 
     public String getDate ()

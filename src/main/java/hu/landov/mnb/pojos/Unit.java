@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 
-@XmlRootElement
+@XmlRootElement(name="Unit")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Unit {
 	@XmlAttribute

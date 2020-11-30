@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Demo {
 
-	static public void main(String[] args) {
+	static public void main(String[] args) throws Exception {
 		try {
 			MNBWebserviceFacade facade = new MNBWebserviceFacade();
 

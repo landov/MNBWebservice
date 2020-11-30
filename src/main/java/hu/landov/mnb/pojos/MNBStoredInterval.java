@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="MNBStoredInterval")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MNBStoredInterval {
-	@XmlElement
+	@XmlElement(name = "DateInterval")
 	private DateInterval dateInterval;
 
     public DateInterval getDateInterval ()
