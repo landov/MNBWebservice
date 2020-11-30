@@ -1,5 +1,15 @@
 package hu.landov.mnb;
 
+
+/**
+ * This exception thrown by MNBWebserviceFacade class.
+ * In case Thorwable cause present it's wrapping an exception
+ * thrown by a soap client. (like MNBArfolyamServiceSoapGet*)
+ *
+ * @author landov
+ * @version 1.1.2
+ * @since 2020-11-30
+ */
 public class MNBWebserviceFacadeException extends Exception {
 
 	/**

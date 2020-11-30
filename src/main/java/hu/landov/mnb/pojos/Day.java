@@ -1,4 +1,4 @@
-package hu.landov.mnb.classes;
+package hu.landov.mnb.pojos;
 
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;

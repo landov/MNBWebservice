@@ -1,6 +1,14 @@
 package hu.landov.mnb;
 
 import java.time.LocalDate;
+
+/**
+* This is a demonstration program for usage of MNBWebserviceFacade
+*
+* @author  landov
+* @version 1.1.2
+* @since   2020-11-30 
+*/
 import java.util.List;
 
 public class Demo {
@@ -9,7 +17,7 @@ public class Demo {
 		try {
 			MNBWebserviceFacade facade = new MNBWebserviceFacade();
 
-			System.out.println("Data available between:");
+			// file deepcode ignore SystemPrintln: <Intentional use>			System.out.println("Data available between:");
 			LocalDateInterval localDateInterval = facade.getStoredInterval();
 			System.out.print(localDateInterval.getStartDate() + " and ");
 			System.out.println(localDateInterval.getEndDate());
