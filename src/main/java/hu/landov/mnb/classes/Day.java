@@ -15,7 +15,7 @@ public class Day {
 	private String date;
 
 	@XmlElement
-    private Rate[] Rate;
+    private Rate[] rate;
 
     public String getDate ()
     {
@@ -29,12 +29,12 @@ public class Day {
 
     public Rate[] getRate ()
     {
-        return Rate;
+        return rate;
     }
 
-    public void setRate (Rate[] Rate)
+    public void setRate (Rate[] rate)
     {
-        this.Rate = Rate;
+        this.rate = rate;
     }
 
 }

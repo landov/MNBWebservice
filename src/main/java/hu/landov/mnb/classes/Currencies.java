@@ -5,15 +5,15 @@ import javax.xml.bind.annotation.XmlElement;
 public class Currencies
 {
 	@XmlElement
-    private String[] Curr;
+    private String[] curr;
 
     public String[] getCurr ()
     {
-        return Curr;
+        return curr;
     }
 
-    public void setCurr (String[] Curr)
+    public void setCurr (String[] curr)
     {
-        this.Curr = Curr;
+        this.curr = curr;
     }
 }

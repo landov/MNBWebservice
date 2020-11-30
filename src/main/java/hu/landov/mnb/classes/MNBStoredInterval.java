@@ -9,15 +9,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MNBStoredInterval {
 	@XmlElement
-	private DateInterval DateInterval;
+	private DateInterval dateInterval;
 
     public DateInterval getDateInterval ()
     {
-        return DateInterval;
+        return dateInterval;
     }
 
-    public void setDateInterval (DateInterval DateInterval)
+    public void setDateInterval (DateInterval dateInterval)
     {
-        this.DateInterval = DateInterval;
+        this.dateInterval = dateInterval;
     }
 }

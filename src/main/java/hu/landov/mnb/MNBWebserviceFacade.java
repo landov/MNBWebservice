@@ -24,31 +24,37 @@ import hu.landov.mnb.soap.MNBArfolyamServiceSoapImpl;
 
 public class MNBWebserviceFacade {
 
-	private MNBArfolyamServiceSoapImpl service = new MNBArfolyamServiceSoapImpl();
-	private MNBArfolyamServiceSoap port = service.getCustomBindingMNBArfolyamServiceSoap();
+	private final MNBArfolyamServiceSoapImpl service;
+	private final MNBArfolyamServiceSoap port;
 	private JAXBContext jaxbContext;
 	private Unmarshaller jaxbUnmarshaller;
-	private List<String> currencies = getCurrencies();
+	private final List<String> currencies;
 
-	private <T> Object unmarshall(String xml, Class<T> mnbclass) {
+	public MNBWebserviceFacade() throws MNBWebserviceFacadeException {
+		service = new MNBArfolyamServiceSoapImpl();
+		port = service.getCustomBindingMNBArfolyamServiceSoap();
+		currencies = getCurrencies();
+	}
+
+	private <T> Object unmarshall(String xml, Class<T> mnbclass) throws MNBWebserviceFacadeException {
 		try {
 			jaxbContext = JAXBContext.newInstance(mnbclass);
 			jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			Object unmarshalled = jaxbUnmarshaller.unmarshal(new StringReader(xml));
 			return unmarshalled;
 		} catch (JAXBException e) {
-			e.printStackTrace();
-			return null;
+			throw new MNBWebserviceFacadeException(
+					"http://www.mnb.hu/arfolyamok.asmx returned no data for:" + mnbclass.getName());
 		}
 	}
 
-	public void checkCurrency(String currency) {
+	public void checkCurrency(String currency) throws IllegalArgumentException {
 		if (!(currencies.contains(currency)))
 			throw new IllegalArgumentException("Currency " + currency + " not found in dataset.");
 
 	}
 
-	public LocalDateInterval getStoredInterval() {
+	public LocalDateInterval getStoredInterval() throws MNBWebserviceFacadeException {
 		try {
 			String xml = port.getDateInterval();
 			MNBStoredInterval storedInterval = (MNBStoredInterval) unmarshall(xml, MNBStoredInterval.class);
@@ -57,12 +63,12 @@ public class MNBWebserviceFacade {
 					LocalDate.parse(storedInterval.getDateInterval().getEnddate()));
 			return localDateInterval;
 		} catch (MNBArfolyamServiceSoapGetDateIntervalStringFaultFaultMessage e) {
-			e.printStackTrace();
-			return null;
+			throw new MNBWebserviceFacadeException("Soap service thrown an exceprion: " + e.getMessage(),
+					e.getFaultInfo(), e);
 		}
 	}
 
-	public List<String> getCurrencies() {
+	public List<String> getCurrencies() throws MNBWebserviceFacadeException {
 		List<String> currencies = new ArrayList<String>();
 		try {
 			String xml = port.getCurrencies();
@@ -72,17 +78,19 @@ public class MNBWebserviceFacade {
 				currencies.add(s);
 			}
 		} catch (MNBArfolyamServiceSoapGetCurrenciesStringFaultFaultMessage e) {
-			e.printStackTrace();
+			throw new MNBWebserviceFacadeException("Soap service thrown an exceprion: " + e.getMessage(),
+					e.getFaultInfo(), e);
 		}
 		return currencies;
 	}
 
-	public ExchangeRate getCurrentExchangeRate(String currency) {
+	public ExchangeRate getCurrentExchangeRate(String currency) throws MNBWebserviceFacadeException {
 		LocalDate lastDate = getStoredInterval().getEndDate();
 		return getHistoricalExchangeRates(currency, lastDate, lastDate).get(0);
 	}
 
-	public List<ExchangeRate> getHistoricalExchangeRates(String currency, LocalDate startDate, LocalDate endDate) {
+	public List<ExchangeRate> getHistoricalExchangeRates(String currency, LocalDate startDate, LocalDate endDate)
+			throws MNBWebserviceFacadeException {
 		checkCurrency(currency);
 		List<ExchangeRate> exchangeRates = new ArrayList<ExchangeRate>();
 		LocalDateInterval localDateInterval = getStoredInterval();
@@ -108,30 +116,34 @@ public class MNBWebserviceFacade {
 
 			}
 		} catch (MNBArfolyamServiceSoapGetExchangeRatesStringFaultFaultMessage e) {
-			e.printStackTrace();
+			throw new MNBWebserviceFacadeException("Soap service thrown an exceprion: " + e.getMessage(),
+					e.getFaultInfo(), e);
 		}
 		Collections.sort(exchangeRates, (x, y) -> x.getDate().compareTo(y.getDate()));
 		return exchangeRates;
 	}
 
-	public List<ExchangeRate> getHistoricalExchangeRates(String currency, String startDate, String endDate) {
+	public List<ExchangeRate> getHistoricalExchangeRates(String currency, String startDate, String endDate)
+			throws MNBWebserviceFacadeException {
 		return getHistoricalExchangeRates(currency, LocalDate.parse(startDate), LocalDate.parse(endDate));
 	}
 
-	public ExchangeRate getHistoricalExchangeRate(String currency, LocalDate date) {
+	public ExchangeRate getHistoricalExchangeRate(String currency, LocalDate date) throws MNBWebserviceFacadeException {
 		return getHistoricalExchangeRates(currency, date, date).get(0);
 	}
 
-	public ExchangeRate getHistoricalExchangeRate(String currency, String date) {
+	public ExchangeRate getHistoricalExchangeRate(String currency, String date) throws MNBWebserviceFacadeException {
 		return getHistoricalExchangeRates(currency, date, date).get(0);
 	}
-	
-	public ExchangeRate getExchangeRateBetween(String currency1, String currency2, String date) {
+
+	public ExchangeRate getExchangeRateBetween(String currency1, String currency2, String date)
+			throws MNBWebserviceFacadeException {
 		LocalDate localDate = LocalDate.parse(date);
 		return getExchangeRateBetween(currency1, currency2, localDate);
 	}
 
-	public ExchangeRate getExchangeRateBetween(String currency1, String currency2, LocalDate date) {
+	public ExchangeRate getExchangeRateBetween(String currency1, String currency2, LocalDate date)
+			throws MNBWebserviceFacadeException {
 		ExchangeRate rate1 = getHistoricalExchangeRate(currency1, date);
 		ExchangeRate rate2 = getHistoricalExchangeRate(currency2, date);
 		ExchangeRate exchangeRate = new ExchangeRate();

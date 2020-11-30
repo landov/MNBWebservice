@@ -6,15 +6,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="MNBCurrencyUnits")
 public class MNBCurrencyUnits {
 	@XmlElement
-	private Units Units;
+	private Units units;
 
     public Units getUnits ()
     {
-        return Units;
+        return units;
     }
 
-    public void setUnits (Units Units)
+    public void setUnits (Units units)
     {
-        this.Units = Units;
+        this.units = units;
     }
 }

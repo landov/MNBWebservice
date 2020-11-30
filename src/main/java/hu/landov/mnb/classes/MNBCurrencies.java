@@ -7,16 +7,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class MNBCurrencies
 {
 	@XmlElement
-    private Currencies Currencies;
+    private Currencies currencies;
 
     public Currencies getCurrencies ()
     {
-        return Currencies;
+        return currencies;
     }
 
-    public void setCurrencies (Currencies Currencies)
+    public void setCurrencies (Currencies currencies)
     {
-        this.Currencies = Currencies;
+        this.currencies = currencies;
     }
 
 }

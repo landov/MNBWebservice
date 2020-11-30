@@ -7,16 +7,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class MNBCurrentExchangeRates
 {
 	@XmlElement
-    private Day Day;
+    private Day day;
 
     public Day getDay ()
     {
-        return Day;
+        return day;
     }
 
-    public void setDay (Day Day)
+    public void setDay (Day day)
     {
-        this.Day = Day;
+        this.day = day;
     }
 
 }
